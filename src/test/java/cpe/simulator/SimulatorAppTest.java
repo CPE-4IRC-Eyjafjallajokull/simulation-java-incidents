@@ -1,78 +1,89 @@
 package cpe.simulator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 import cpe.simulator.api.IncidentApiClient;
-import cpe.simulator.loader.IncidentProbabilityLoader;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
-import org.mockito.MockedStatic;
 
 class SimulatorAppTest {
 
     @Test
     void sendsIncidentWhenCodeValid() throws Exception {
-        Map<String, Double> probabilities = Map.of("FIRE", 1.0);
+    FakeClient api = new FakeClient(Set.of("FIRE"));
 
-        try (MockedStatic<IncidentProbabilityLoader> loaderMock = mockStatic(IncidentProbabilityLoader.class);
-             MockedConstruction<IncidentApiClient> apiConstruction = mockConstruction(IncidentApiClient.class, (mock, context) ->
-                     org.mockito.Mockito.when(mock.getValidIncidentCodes()).thenReturn(Set.of("FIRE")))) {
+    String output = runAndCaptureOutput(() ->
+        SimulatorApp.handleIncidentCode("FIRE", () -> api)
+    );
 
-            loaderMock.when(() -> IncidentProbabilityLoader.load("incident-probabilities.json"))
-                      .thenReturn(probabilities);
-
-            String output = runMainAndCaptureOutput();
-
-            assertEquals(1, apiConstruction.constructed().size(), "An API client should be constructed");
-            IncidentApiClient apiMock = apiConstruction.constructed().get(0);
-
-            verify(apiMock).postIncident(argThat(incident -> "FIRE".equals(incident.getCode())));
-            assertTrue(output.contains("Incident envoyé : FIRE"));
-        }
+    assertTrue(api.posted);
+    assertTrue("FIRE".equals(api.lastIncident.getCode()));
+        assertTrue(output.contains("Incident envoyé : FIRE"));
     }
 
     @Test
     void skipsIncidentWhenCodeInvalid() throws Exception {
-        Map<String, Double> probabilities = Map.of("FIRE", 1.0);
+    FakeClient api = new FakeClient(Set.of("OTHER"));
 
-        try (MockedStatic<IncidentProbabilityLoader> loaderMock = mockStatic(IncidentProbabilityLoader.class);
-             MockedConstruction<IncidentApiClient> apiConstruction = mockConstruction(IncidentApiClient.class, (mock, context) ->
-                     org.mockito.Mockito.when(mock.getValidIncidentCodes()).thenReturn(Set.of("OTHER")))) {
+    String output = runAndCaptureOutput(() ->
+        SimulatorApp.handleIncidentCode("FIRE", () -> api)
+    );
 
-            loaderMock.when(() -> IncidentProbabilityLoader.load("incident-probabilities.json"))
-                      .thenReturn(probabilities);
-
-            String output = runMainAndCaptureOutput();
-
-            assertEquals(1, apiConstruction.constructed().size(), "An API client should be constructed");
-            IncidentApiClient apiMock = apiConstruction.constructed().get(0);
-
-            verify(apiMock, never()).postIncident(any());
-            assertTrue(output.contains("Incident ignoré (code invalide) : FIRE"));
-        }
+        assertFalse(api.posted);
+        assertTrue(output.contains("Incident ignoré (code invalide) : FIRE"));
     }
 
-    private String runMainAndCaptureOutput() throws Exception {
+    @Test
+    void skipsIncidentWhenCodeIsNeutral000() throws Exception {
+        String output = runAndCaptureOutput(() ->
+                SimulatorApp.handleIncidentCode("000", () -> {
+                    throw new AssertionError("API client should not be constructed for neutral code");
+                })
+        );
+
+        assertTrue(output.contains("Incident neutre ignoré : 000"));
+    }
+
+    private String runAndCaptureOutput(ThrowingRunnable action) throws Exception {
         PrintStream originalOut = System.out;
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         System.setOut(new PrintStream(buffer));
         try {
-            SimulatorApp.main(new String[0]);
+            action.run();
             return buffer.toString(StandardCharsets.UTF_8);
         } finally {
             System.setOut(originalOut);
+        }
+    }
+
+    @FunctionalInterface
+    private interface ThrowingRunnable {
+        void run() throws Exception;
+    }
+
+    private static class FakeClient extends IncidentApiClient {
+        private final Set<String> valid;
+        boolean posted = false;
+        cpe.simulator.model.Incident lastIncident;
+
+        FakeClient(Set<String> valid) {
+            super("http://localhost", "token");
+            this.valid = valid;
+        }
+
+        @Override
+        public Set<String> getValidIncidentCodes() {
+            return valid;
+        }
+
+        @Override
+        public void postIncident(cpe.simulator.model.Incident incident) {
+            posted = true;
+            lastIncident = incident;
         }
     }
 }

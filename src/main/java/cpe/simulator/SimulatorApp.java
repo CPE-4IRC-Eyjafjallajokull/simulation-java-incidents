@@ -2,6 +2,7 @@ package cpe.simulator;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import cpe.simulator.api.IncidentApiClient;
 import cpe.simulator.config.SimulatorConfig;
@@ -17,17 +18,30 @@ public class SimulatorApp {
                 IncidentProbabilityLoader.load("incident-probabilities.json");
 
         IncidentSelector selector =
-                new IncidentSelector(probabilities, 42L);
+                new IncidentSelector(probabilities, SimulatorConfig.RNG_SEED);
 
         String incidentCode = selector.pickIncidentCode();
-        Incident incident = new Incident(incidentCode);
 
-        IncidentApiClient api =
+        handleIncidentCode(incidentCode, () ->
                 new IncidentApiClient(
                         SimulatorConfig.API_BASE_URL,
                         SimulatorConfig.API_TOKEN
-                );
+                )
+        );
+    }
 
+    static void handleIncidentCode(String incidentCode,
+                                   Supplier<IncidentApiClient> apiSupplier)
+            throws Exception {
+
+        if ("000".equals(incidentCode)) {
+            System.out.println("ℹ️ Incident neutre ignoré : " + incidentCode);
+            return;
+        }
+
+        Incident incident = new Incident(incidentCode);
+
+        IncidentApiClient api = apiSupplier.get();
         Set<String> validCodes = api.getValidIncidentCodes();
 
         if (validCodes.contains(incidentCode)) {
