@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import cpe.simulator.api.IncidentApiClient;
+
+import cpe.simulator.model.IncidentCreateRequest;
+import cpe.simulator.model.IncidentCreateResponse;
+import cpe.simulator.model.IncidentPhaseCreateRequest;
+import cpe.simulator.model.PhaseType;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +26,8 @@ class SimulatorAppTest {
     );
 
     assertTrue(api.posted);
-    assertTrue("FIRE".equals(api.lastIncident.getCode()));
+    assertTrue("FIRE".equals(api.lastPhaseTypeCode));
+    assertWithinGeoBounds(api.lastLatitude, api.lastLongitude);
         assertTrue(output.contains("Incident envoyé : FIRE"));
     }
 
@@ -60,6 +66,16 @@ class SimulatorAppTest {
         }
     }
 
+    private void assertWithinGeoBounds(double lat, double lon) {
+        // Based on src/main/resources/geographic-zone.json default zone lyon_villeurbanne
+        double latMin = 45.72;
+        double latMax = 45.81;
+        double lonMin = 4.80;
+        double lonMax = 4.93;
+        assertTrue(lat >= latMin && lat <= latMax, "Latitude out of bounds");
+        assertTrue(lon >= lonMin && lon <= lonMax, "Longitude out of bounds");
+    }
+
     @FunctionalInterface
     private interface ThrowingRunnable {
         void run() throws Exception;
@@ -68,7 +84,10 @@ class SimulatorAppTest {
     private static class FakeClient extends IncidentApiClient {
         private final Set<String> valid;
         boolean posted = false;
-        cpe.simulator.model.Incident lastIncident;
+        String lastPhaseTypeCode;
+        String lastIncidentId;
+        double lastLatitude;
+        double lastLongitude;
 
         FakeClient(Set<String> valid) {
             super("http://localhost", "token");
@@ -76,14 +95,30 @@ class SimulatorAppTest {
         }
 
         @Override
-        public Set<String> getValidIncidentCodes() {
-            return valid;
+        public java.util.List<PhaseType> getPhaseTypes() {
+            return valid.stream().map(code -> {
+                PhaseType pt = new PhaseType();
+                pt.setCode(code);
+                pt.setPhaseTypeId(code + "-id");
+                pt.setDefaultCriticity(0);
+                return pt;
+            }).toList();
         }
 
         @Override
-        public void postIncident(cpe.simulator.model.Incident incident) {
+        public IncidentCreateResponse createIncident(IncidentCreateRequest incident) {
+            IncidentCreateResponse resp = new IncidentCreateResponse();
+            resp.setIncidentId("incident-id");
+            this.lastLatitude = incident.getLatitude();
+            this.lastLongitude = incident.getLongitude();
+            return resp;
+        }
+
+        @Override
+        public void createIncidentPhase(IncidentPhaseCreateRequest phase) {
             posted = true;
-            lastIncident = incident;
+            lastPhaseTypeCode = phase.getPhaseTypeId().replace("-id", "");
+            lastIncidentId = phase.getIncidentId();
         }
     }
 }

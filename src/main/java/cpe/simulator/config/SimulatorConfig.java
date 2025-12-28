@@ -10,4 +10,10 @@ public class SimulatorConfig {
 
     public static final long RNG_SEED =
             Long.parseLong(System.getenv().getOrDefault("RNG_SEED", "42"));
+
+    public static final String GEO_ZONES_PATH =
+            System.getenv().getOrDefault("GEO_ZONES_PATH", "geographic-zone.json");
+
+    public static final String GEO_ZONE_NAME =
+            System.getenv().getOrDefault("GEO_ZONE_NAME", "lyon_villeurbanne");
 }
