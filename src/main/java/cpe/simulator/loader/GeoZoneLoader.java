@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import cpe.simulator.model.GeoZone;
 
+// Chargeur des zones géographiques à partir d'un fichier JSON
+
 public class GeoZoneLoader {
 
     public static GeoZone load(String path, String zoneName) throws IOException {

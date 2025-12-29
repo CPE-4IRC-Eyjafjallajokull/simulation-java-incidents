@@ -1,5 +1,7 @@
 package cpe.simulator.model;
 
+// Représente une zone géographique définie par des coordonnées minimales et maximales
+
 public class GeoZone {
     private double latitudeMin;
     private double latitudeMax;

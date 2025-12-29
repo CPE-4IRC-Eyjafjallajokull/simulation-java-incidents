@@ -2,6 +2,8 @@ package cpe.simulator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+// Modèle représentant un type de phase d'incident
+
 public class PhaseType {
     @JsonProperty("phase_category_id")
     private String phaseCategoryId;

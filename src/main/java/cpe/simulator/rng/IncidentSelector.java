@@ -6,6 +6,8 @@ import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
 
+// Sélecteur d'incidents basé sur des probabilités avec une graine pour la reproductibilité
+
 public class IncidentSelector {
 
     private final Random random;

@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+// Client API pour interagir avec le service des incidents
+
 public class IncidentApiClient {
 
     private final HttpClient client = HttpClient.newHttpClient();
@@ -24,11 +26,15 @@ public class IncidentApiClient {
     private final String bearerToken;
     private final ObjectMapper mapper;
 
+    // Constructeur du client API avec l'URL de base et le token Bearer
+
     public IncidentApiClient(String baseUrl, String bearerToken) {
         this.baseUrl = baseUrl;
         this.bearerToken = bearerToken;
         this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
+
+    // Récupérer les types de phases d'incidents disponibles
 
     public List<PhaseType> getPhaseTypes()
             throws IOException, InterruptedException {
@@ -52,6 +58,8 @@ public class IncidentApiClient {
         );
     }
 
+        // Récupérer les codes d'incidents valides
+        
         public Set<String> getValidIncidentCodes()
             throws IOException, InterruptedException {
 
@@ -59,6 +67,8 @@ public class IncidentApiClient {
             .map(PhaseType::getCode)
             .collect(Collectors.toSet());
         }
+
+        // Créer un nouvel incident
 
         public IncidentCreateResponse createIncident(IncidentCreateRequest incident)
             throws IOException, InterruptedException {
@@ -81,6 +91,8 @@ public class IncidentApiClient {
 
         return mapper.readValue(response.body(), IncidentCreateResponse.class);
     }
+
+    // Créer une phase d'incident
 
     public void createIncidentPhase(IncidentPhaseCreateRequest phase)
             throws IOException, InterruptedException {

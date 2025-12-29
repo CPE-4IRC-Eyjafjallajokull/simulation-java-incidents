@@ -27,6 +27,8 @@ public class SimulatorApp {
 
     public static void main(String[] args) throws Exception {
 
+        // Charger les probabilités d'incidents (fichier json)
+
         Map<String, Double> probabilities =
                 IncidentProbabilityLoader.load("incident-probabilities.json");
 
@@ -34,6 +36,8 @@ public class SimulatorApp {
                 new IncidentSelector(probabilities, SimulatorConfig.RNG_SEED);
 
         String incidentCode = selector.pickIncidentCode();
+
+        // Gérer l'incident sélectionné
 
         handleIncidentCode(incidentCode, () ->
                 new IncidentApiClient(
@@ -47,10 +51,14 @@ public class SimulatorApp {
                                    Supplier<IncidentApiClient> apiSupplier)
             throws Exception {
 
+        // Ignorer les incidents neutres "000"
+
         if ("000".equals(incidentCode)) {
             System.out.println("ℹ️ Incident neutre ignoré : " + incidentCode);
             return;
         }
+
+        // Envoyer l'incident via l'API
 
         IncidentApiClient api = apiSupplier.get();
         List<PhaseType> phaseTypes = api.getPhaseTypes();
@@ -59,10 +67,14 @@ public class SimulatorApp {
                 .findFirst()
                 .orElse(null);
 
+        // Ignorer les codes d'incident invalides
+
         if (phaseType == null) {
             System.out.println("⚠️ Incident ignoré (code invalide) : " + incidentCode);
             return;
         }
+
+        // Construire la requête d'incident
 
         IncidentCreateRequest request = buildIncidentRequest(incidentCode);
         IncidentCreateResponse response = api.createIncident(request);
@@ -78,6 +90,8 @@ public class SimulatorApp {
         System.out.println("✅ Incident envoyé : " + incidentCode + " (" + response.getIncidentId() + ")");
     }
 
+    // Construire la requête d'incident avec des coordonnées aléatoires dans la zone géographique
+
     private static IncidentCreateRequest buildIncidentRequest(String incidentCode) throws Exception {
         IncidentCreateRequest request = new IncidentCreateRequest();
         request.setCreatedByOperatorId(System.getenv().getOrDefault("OPERATOR_ID", "operator-demo"));
@@ -91,15 +105,21 @@ public class SimulatorApp {
         request.setDescription("Incident " + incidentCode + " simulé");
         request.setEndedAt(null);
 
+        // Enrichir l'adresse via un service de géocodage inverse
+
         if (Boolean.parseBoolean(System.getenv().getOrDefault("ENABLE_REVERSE_GEOCODE", "true"))) {
             enrichAddressFromReverse(request);
         }
         return request;
     }
 
+    // Générer un nombre aléatoire dans une plage donnée
+
     private static double randomInRange(Random rng, double min, double max) {
         return min + (max - min) * rng.nextDouble();
     }
+
+    // Enrichir l'adresse de l'incident via un service de géocodage inverse
 
     private static void enrichAddressFromReverse(IncidentCreateRequest request) {
         try {

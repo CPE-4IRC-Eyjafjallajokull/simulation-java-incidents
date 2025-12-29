@@ -1,5 +1,7 @@
 package cpe.simulator.config;
 
+// Configuration du simulateur via des variables d'environnement
+
 public class SimulatorConfig {
 
     public static final String API_BASE_URL =

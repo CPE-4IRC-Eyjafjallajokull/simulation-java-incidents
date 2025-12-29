@@ -2,6 +2,8 @@ package cpe.simulator.model;
 
 import java.time.LocalDateTime;
 
+// Modèle représentant une requête de création de phase d'incident
+
 public class IncidentPhaseCreateRequest {
     private String incidentId;
     private String phaseTypeId;

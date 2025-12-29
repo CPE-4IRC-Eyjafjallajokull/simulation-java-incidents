@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+// Chargeur des probabilités d'incidents à partir d'un fichier JSON
+
 public class IncidentProbabilityLoader {
 
     public static Map<String, Double> load(String path) throws IOException {

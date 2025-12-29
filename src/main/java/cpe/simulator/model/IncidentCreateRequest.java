@@ -2,6 +2,8 @@ package cpe.simulator.model;
 
 import java.time.LocalDateTime;
 
+// Modèle représentant une requête de création d'incident
+
 public class IncidentCreateRequest {
     private String createdByOperatorId;
     private String address;
