@@ -1,0 +1,14 @@
+{
+  "zones": {
+    "lyon_villeurbanne": {
+      "latitude": {
+        "min": 45.72,
+        "max": 45.81
+      },
+      "longitude": {
+        "min": 4.80,
+        "max": 4.93
+      }
+    }
+  }
+}

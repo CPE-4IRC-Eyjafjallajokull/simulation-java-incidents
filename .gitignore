@@ -35,6 +35,9 @@ buildNumber.properties
 # https://maven.apache.org/wrapper/#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
+# Environment variables - DO NOT COMMIT
+.env.local
+
 # Eclipse m2e generated files
 # Eclipse Core
 .project
