@@ -64,23 +64,23 @@ public final class Simulator {
 
     String incidentId = incidentService.createIncident(incident);
     logger.info(
-        "Incident envoyé: "
-            + incident.code()
-            + (incidentId != null ? " (" + incidentId + ")" : ""));
+      "Incident envoyé: "
+        + incident.label()
+        + (incidentId != null ? " (" + incidentId + ")" : ""));
   }
 
   private void logIncidentStart(Incident incident) {
     if (incident.location() != null) {
       logger.info(
           "Envoi incident "
-              + incident.code()
+              + incident.label()
               + " (lat="
               + incident.location().latitude()
               + ", lon="
               + incident.location().longitude()
               + ")");
     } else {
-      logger.info("Envoi incident " + incident.code());
+      logger.info("Envoi incident " + incident.label());
     }
   }
 

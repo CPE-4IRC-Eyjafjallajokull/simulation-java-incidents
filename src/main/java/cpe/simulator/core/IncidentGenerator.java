@@ -49,14 +49,16 @@ public final class IncidentGenerator {
 
     Location location = generateLocation();
 
+
     Incident incident =
-        Incident.builder()
-            .code(code)
-            .description("Incident " + code + " simulé")
-            .location(location)
-            .phaseType(phaseType)
-            .startedAt(OffsetDateTime.now(ZoneOffset.UTC))
-            .build();
+      Incident.builder()
+        .code(code)
+        .label(phaseType.label())
+        .description("Incident " + phaseType.label() + " simulé")
+        .location(location)
+        .phaseType(phaseType)
+        .startedAt(OffsetDateTime.now(ZoneOffset.UTC))
+        .build();
 
     return Optional.of(incident);
   }
