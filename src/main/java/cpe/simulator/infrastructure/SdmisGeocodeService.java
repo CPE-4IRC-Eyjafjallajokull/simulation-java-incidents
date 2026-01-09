@@ -20,7 +20,7 @@ public final class SdmisGeocodeService implements GeocodeService {
   @Override
   public Optional<Location> reverseGeocode(double latitude, double longitude)
       throws IOException, InterruptedException {
-    String path = String.format(Locale.ROOT, "/geocode/reverse?lat=%s&lon=%s", latitude, longitude);
+    String path = String.format(Locale.ROOT, "/geo/address/reverse?lat=%s&lon=%s", latitude, longitude);
     JsonNode root = httpClient.get(path, JsonNode.class);
 
     if (root == null || !root.path("ok").asBoolean(false)) {
