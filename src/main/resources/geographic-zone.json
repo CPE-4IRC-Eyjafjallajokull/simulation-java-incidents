@@ -1,57 +1,167 @@
 {
   "zones": {
-    "lyon_villeurbanne": {
+    "lyon_1": {
       "bounds": {
-        "latMin": 45.74,
-        "latMax": 45.79,
-        "lonMin": 4.82,
-        "lonMax": 4.90
+        "latMin": 45.764,
+        "latMax": 45.775,
+        "lonMin": 4.828,
+        "lonMax": 4.838
       },
-      "excludedZones": [
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "lyon_2": {
+      "bounds": {
+        "latMin": 45.748,
+        "latMax": 45.764,
+        "lonMin": 4.825,
+        "lonMax": 4.840
+      },
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "lyon_3": {
+      "bounds": {
+        "latMin": 45.752,
+        "latMax": 45.770,
+        "lonMin": 4.850,
+        "lonMax": 4.880
+      },
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "lyon_4": {
+      "bounds": {
+        "latMin": 45.775,
+        "latMax": 45.790,
+        "lonMin": 4.820,
+        "lonMax": 4.842
+      },
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "lyon_5": {
+      "bounds": {
+        "latMin": 45.752,
+        "latMax": 45.772,
+        "lonMin": 4.808,
+        "lonMax": 4.825
+      },
+      "excludedZones": [],
+      "restrictedZones": [
         {
-          "type": "WATER",
-          "name": "Rhône",
+          "type": "PARK",
+          "name": "Parc des Hauteurs Fourvière",
           "polygon": [
-            [45.748, 4.835],
-            [45.748, 4.845],
-            [45.785, 4.845],
-            [45.785, 4.835]
-          ]
-        },
-        {
-          "type": "WATER",
-          "name": "Saône",
-          "polygon": [
-            [45.755, 4.815],
-            [45.755, 4.825],
-            [45.790, 4.825],
-            [45.790, 4.815]
+            [45.758, 4.815],
+            [45.758, 4.822],
+            [45.765, 4.822],
+            [45.765, 4.815]
+          ],
+          "forbiddenIncidents": [
+            "FIRE_APARTMENT",
+            "FIRE_HABITATION",
+            "FIRE_INDUSTRIAL",
+            "ACC_INDUSTRIAL",
+            "TECH_ELEVATOR"
           ]
         }
-      ],
+      ]
+    },
+    "lyon_6": {
+      "bounds": {
+        "latMin": 45.765,
+        "latMax": 45.780,
+        "lonMin": 4.842,
+        "lonMax": 4.865
+      },
+      "excludedZones": [],
       "restrictedZones": [
         {
           "type": "PARK",
           "name": "Parc de la Tête d'Or",
           "polygon": [
-            [45.774, 4.848],
-            [45.774, 4.860],
-            [45.779, 4.860],
-            [45.779, 4.848]
+            [45.772, 4.850],
+            [45.772, 4.875],
+            [45.788, 4.875],
+            [45.788, 4.850]
           ],
           "forbiddenIncidents": [
             "FIRE_APARTMENT",
+            "FIRE_HABITATION",
             "FIRE_INDUSTRIAL",
+            "FIRE_CHIMNEY",
+            "FIRE_BASEMENT",
             "ACC_ROAD",
             "ACC_INDUSTRIAL",
-            "FIRE_CHIMNEY",
             "TECH_ELEVATOR",
-            "FIRE_BASEMENT",
             "ACC_TRAIN_COLLISION",
             "ACC_RAIL_INCIDENT"
           ]
         }
       ]
+    },
+    "lyon_7": {
+      "bounds": {
+        "latMin": 45.730,
+        "latMax": 45.755,
+        "lonMin": 4.838,
+        "lonMax": 4.870
+      },
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "lyon_8": {
+      "bounds": {
+        "latMin": 45.725,
+        "latMax": 45.750,
+        "lonMin": 4.860,
+        "lonMax": 4.895
+      },
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "lyon_9": {
+      "bounds": {
+        "latMin": 45.770,
+        "latMax": 45.795,
+        "lonMin": 4.795,
+        "lonMax": 4.820
+      },
+      "excludedZones": [],
+      "restrictedZones": []
+    },
+    "villeurbanne": {
+      "bounds": {
+        "latMin": 45.760,
+        "latMax": 45.795,
+        "lonMin": 4.870,
+        "lonMax": 4.920
+      },
+      "excludedZones": [],
+      "restrictedZones": []
     }
-  }
+  },
+  "globalExcludedZones": [
+    {
+      "type": "WATER",
+      "name": "Rhône",
+      "polygon": [
+        [45.70, 4.838],
+        [45.70, 4.862],
+        [45.82, 4.862],
+        [45.82, 4.838]
+      ]
+    },
+    {
+      "type": "WATER",
+      "name": "Saône",
+      "polygon": [
+        [45.72, 4.820],
+        [45.72, 4.835],
+        [45.82, 4.835],
+        [45.82, 4.820]
+      ]
+    }
+  ]
 }

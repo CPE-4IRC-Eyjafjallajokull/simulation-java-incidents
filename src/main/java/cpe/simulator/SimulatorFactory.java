@@ -52,16 +52,8 @@ public final class SimulatorFactory {
     Map<String, Double> probabilities = new ProbabilityLoader().load(config.probabilitiesPath());
     logger.info("Probabilités chargées: " + probabilities.size());
 
-    GeoZone zone = new GeoZoneLoader().load(config.geoZonesPath(), config.geoZoneName());
-    logger.info(
-        "Zone géo: lat="
-            + zone.latitudeMin()
-            + ".."
-            + zone.latitudeMax()
-            + " lon="
-            + zone.longitudeMin()
-            + ".."
-            + zone.longitudeMax());
+    List<GeoZone> zones = new GeoZoneLoader().loadAll(config.geoZonesPath());
+    logger.info("Zones géographiques chargées: " + zones.size() + " arrondissements");
 
     // Composants de simulation
     IncidentSelector selector = new ProbabilityBasedSelector(probabilities, config.rngSeed());
@@ -69,7 +61,7 @@ public final class SimulatorFactory {
         new ExponentialDelayStrategy(config.incidentsPerHour(), config.rngSeed() + 2);
 
     IncidentGenerator generator =
-        new IncidentGenerator(selector, phaseCatalog, zone, geocodeService, config.rngSeed() + 1);
+        new IncidentGenerator(selector, phaseCatalog, zones, geocodeService, config.rngSeed() + 1);
 
     logger.info("Incidents par heure: " + config.incidentsPerHour());
 
