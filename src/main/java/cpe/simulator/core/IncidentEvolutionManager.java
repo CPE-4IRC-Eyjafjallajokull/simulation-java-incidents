@@ -3,16 +3,16 @@ package cpe.simulator.core;
 import cpe.simulator.domain.Incident;
 import cpe.simulator.domain.IncidentPhase;
 import cpe.simulator.infrastructure.SubIncidentProbabilityLoader;
+
 import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.Map;
+import java.util.Random;
 
 /** Gère l'évolution des incidents selon les probabilités de phases. */
-public class IncidentEvolutionManager {
-    private static final String TERMINAL_PHASE_CODE = "NO_INCIDENT";
+public final class IncidentEvolutionManager {
+
     private final SubIncidentProbabilityLoader probabilityLoader;
     private final Random rng;
-    private final Logger logger = Logger.getLogger(IncidentEvolutionManager.class.getName());
 
     public IncidentEvolutionManager(SubIncidentProbabilityLoader loader, long seed) {
         this.probabilityLoader = loader;
@@ -21,36 +21,27 @@ public class IncidentEvolutionManager {
 
     /**
      * Fait évoluer l'incident vers une nouvelle phase selon les probabilités.
-     * @param incident Incident à faire évoluer
-     * @return true si une évolution a eu lieu
+     * Ajoute la nouvelle phase à la liste des phases de l'incident.
+     *
+     * @param incident Incident à faire évoluer (modifié in-place via sa liste de phases)
+     * @return true si une évolution a eu lieu, false sinon
      */
     public boolean evolve(Incident incident) {
         String currentCode = incident.currentPhase().code();
         Map<String, Double> nextPhases = probabilityLoader.getNextPhases(currentCode);
+
         if (nextPhases == null || nextPhases.isEmpty()) {
-            logger.fine("Aucune phase suivante possible pour " + currentCode);
             return false;
         }
 
         String nextCode = pickNextPhase(nextPhases);
         if (nextCode == null) {
-            logger.warning("Aucune phase tirée au sort pour " + currentCode);
             return false;
         }
 
-        // Stop evolution if next phase is terminal
-        if (TERMINAL_PHASE_CODE.equalsIgnoreCase(nextCode)) {
-            logger.info("Phase terminale atteinte (" + nextCode + ") pour l'incident, arrêt de l'évolution.");
-            return false;
-        }
-
+        // Ajoute la nouvelle phase (y compris terminale) à la liste
         IncidentPhase nextPhase = new IncidentPhase(nextCode, nextCode, OffsetDateTime.now());
         incident.phases().add(nextPhase);
-        // Met à jour la phase courante proprement
-        Incident updated = incident.withCurrentPhase(nextPhase);
-        // On ne peut pas remplacer l'objet Incident (record), donc il faut que l'appelant récupère la nouvelle instance si besoin
-        // Mais on met à jour la liste des phases de l'instance existante (side effect)
-        // Pour compatibilité, on retourne true si évolution
         return true;
     }
 

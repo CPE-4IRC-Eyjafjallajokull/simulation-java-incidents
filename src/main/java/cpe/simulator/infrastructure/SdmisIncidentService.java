@@ -61,7 +61,7 @@ public final class SdmisIncidentService implements IncidentService {
     IncidentRequest request = toRequest(incident);
     IncidentResponse response =
         httpClient.post("/qg/incidents/new", request, IncidentResponse.class);
-    return response.incidentId != null ? response.incidentId : null;
+    return response.incidentId;
   }
 
   private IncidentRequest toRequest(Incident incident) {

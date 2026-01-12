@@ -69,13 +69,10 @@ public final class SdmisGeocodeService implements GeocodeService {
   }
 
   private String joinNonBlank(String separator, String... parts) {
-    StringBuilder sb = new StringBuilder();
+    java.util.StringJoiner joiner = new java.util.StringJoiner(separator);
     for (String part : parts) {
       if (part != null && !part.isBlank()) {
-        if (sb.length() > 0) {
-          sb.append(separator);
-        }
-        sb.append(part);
+        joiner.add(part);
       }
     }
     return sb.length() == 0 ? null : sb.toString();

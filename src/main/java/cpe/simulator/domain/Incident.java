@@ -31,16 +31,6 @@ public record Incident(
     private OffsetDateTime startedAt;
     private java.util.List<IncidentPhase> phases = new java.util.ArrayList<>();
     private IncidentPhase currentPhase;
-    public Builder phases(java.util.List<IncidentPhase> phases) {
-      this.phases = phases;
-      return this;
-    }
-
-    public Builder currentPhase(IncidentPhase currentPhase) {
-      this.currentPhase = currentPhase;
-      return this;
-    }
-
 
     public Builder code(String code) {
       this.code = code;
@@ -68,18 +58,30 @@ public record Incident(
       return this;
     }
 
+    public Builder priority(int priority) {
+      this.priority = priority;
+      return this;
+    }
+
     public Builder startedAt(OffsetDateTime startedAt) {
       this.startedAt = startedAt;
       return this;
     }
 
-    public Incident build() {
-      return new Incident(code, label, description, location, phaseTypeId, priority, startedAt, phases, currentPhase);
+    public Builder phases(java.util.List<IncidentPhase> phases) {
+      this.phases = phases;
+      return this;
     }
 
-    public Builder priority(int i) {
-      this.priority = i;
+    public Builder currentPhase(IncidentPhase currentPhase) {
+      this.currentPhase = currentPhase;
       return this;
+    }
+
+    public Incident build() {
+      return new Incident(
+          code, label, description, location,
+          phaseTypeId, priority, startedAt, phases, currentPhase);
     }
   }
 }

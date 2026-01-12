@@ -72,22 +72,20 @@ public final class SimulatorFactory {
         new IncidentGenerator(selector, phaseCatalog, zone, geocodeService, config.rngSeed() + 1);
 
     logger.info("Incidents par heure: " + config.incidentsPerHour());
-    
-    // Chargement des probabilités d'évolution des phases
-    InputStream subProbStream = SimulatorFactory.class.getResourceAsStream(config.subProbabilitiesPath());
-    if (subProbStream == null) {
-      // Fallback: charge depuis le système de fichiers
-      try {
-        subProbStream = new java.io.FileInputStream(config.subProbabilitiesPath());
-        logger.info("Chargement des probabilités d'évolution des phases depuis le système de fichiers: " + config.subProbabilitiesPath());
-      } catch (Exception e) {
-        throw new RuntimeException("Impossible de charger le fichier de probabilités d'évolution des phases: " + config.subProbabilitiesPath(), e);
-      }
-    }
-    SubIncidentProbabilityLoader subIncidentProbabilityLoader = new SubIncidentProbabilityLoader(subProbStream);
 
-    IncidentEvolutionManager evolutionManager = new IncidentEvolutionManager(subIncidentProbabilityLoader, config.rngSeed() + 3);
-    return new Simulator(generator, incidentService, delayStrategy, logger, evolutionManager, phaseCatalog);
+    // Chargement des probabilités d'évolution des phases
+    SubIncidentProbabilityLoader subIncidentProbabilityLoader;
+    try (InputStream subProbStream = ResourceLoader.open(config.subProbabilitiesPath())) {
+      subIncidentProbabilityLoader = new SubIncidentProbabilityLoader(subProbStream);
+      logger.info("Probabilités d'évolution chargées depuis: " + config.subProbabilitiesPath());
+    }
+
+    IncidentEvolutionManager evolutionManager =
+        new IncidentEvolutionManager(subIncidentProbabilityLoader, config.rngSeed() + 3);
+
+    return new Simulator(
+        generator, incidentService, delayStrategy, logger,
+        evolutionManager, phaseCatalog, config.rngSeed() + 4);
   }
 
   private static HttpClient createHttpClient(SimulatorConfig config) {

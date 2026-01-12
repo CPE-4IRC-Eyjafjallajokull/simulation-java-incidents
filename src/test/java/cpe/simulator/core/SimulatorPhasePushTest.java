@@ -50,7 +50,7 @@ class SimulatorPhasePushTest {
         IncidentGenerator generator = new IncidentGenerator(selector, phaseCatalog, zone, geocodeService, 42L);
 
         // Simulator
-        Simulator simulator = new Simulator(generator, incidentService, delayStrategy, logger, manager, phaseCatalog);
+        Simulator simulator = new Simulator(generator, incidentService, delayStrategy, logger, manager, phaseCatalog, 42L);
         simulator.runOnce();
 
         // Vérifie que l'API a été appelée pour l'incident initial
