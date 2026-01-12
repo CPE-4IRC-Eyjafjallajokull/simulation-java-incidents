@@ -92,7 +92,7 @@ public final class Simulator {
       Incident incident = maybeIncident.get();
       logIncidentStart(incident);
       String incidentId = incidentService.createIncident(incident);
-      logger.info("Incident envoyé: " + incident.label() + (incidentId != null ? " (" + incidentId + ")" : ""));
+      logger.info("NEW INCIDENT : " + incident.label() + (incidentId != null ? " (" + incidentId + ")" : ""));
       activeIncidents.add(new IncidentWithId(incident, incidentId));
       createNext = false;
     } else {
@@ -115,7 +115,7 @@ public final class Simulator {
         IncidentPhase lastPhase = evolvingIncident.phases().get(evolvingIncident.phases().size() - 1);
         toEvolve.incident = evolvingIncident.withCurrentPhase(lastPhase);
         String phaseCode = lastPhase.code();
-        logger.info("Incident " + toEvolve.incident.label() + " evolution : nouvelle phase " + phaseCode);
+        logger.info("EVOLUTION Incident " + toEvolve.incident.label() + " : + " + phaseCode);
         if (!TERMINAL_PHASE_CODE.equalsIgnoreCase(phaseCode)) {
           cpe.simulator.domain.PhaseType phaseType = phaseCatalog.byCode(phaseCode);
           String phaseTypeId = phaseType != null ? phaseType.phaseTypeId() : phaseCode;
@@ -124,9 +124,9 @@ public final class Simulator {
           java.time.OffsetDateTime endedAt = startedAt;
           incidentService.addIncidentPhase(toEvolve.incidentId,
             new cpe.simulator.domain.IncidentPhaseForApi(phaseTypeId, priority, startedAt, endedAt));
-          logger.info("Nouvelle phase envoyée: " + phaseCode + " (phase_type_id=" + phaseTypeId + ")");
+          logger.info("NEW PHASE : " + phaseCode);
         } else {
-          logger.info("Incident terminé (NO_INCIDENT) : " + toEvolve.incident.label());
+          logger.info("END Incident : " + toEvolve.incident.label());
           toEvolve.finished = true;
         }
       } else {
