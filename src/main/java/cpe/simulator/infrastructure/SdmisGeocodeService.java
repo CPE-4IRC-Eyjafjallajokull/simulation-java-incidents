@@ -75,6 +75,6 @@ public final class SdmisGeocodeService implements GeocodeService {
         joiner.add(part);
       }
     }
-    return sb.length() == 0 ? null : sb.toString();
+    return joiner.length() == 0 ? null : joiner.toString();
   }
 }
