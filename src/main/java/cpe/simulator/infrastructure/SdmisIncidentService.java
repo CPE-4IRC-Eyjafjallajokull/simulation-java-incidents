@@ -26,17 +26,15 @@ public final class SdmisIncidentService implements IncidentService {
   @Override
   public void addIncidentPhase(String incidentId, cpe.simulator.domain.IncidentPhaseForApi phase) throws IOException, InterruptedException {
     PhaseRequest request = new PhaseRequest(
-      incidentId,
       phase.phaseTypeId(),
       phase.priority(),
       phase.startedAt().toString(),
-      phase.endedAt().toString()
+      phase.endedAt() != null ? phase.endedAt().toString() : null
     );
-    httpClient.post("/incidents/phases", request, Void.class);
+    httpClient.post("/qg/incidents/" + incidentId + "/phases/new", request, Void.class);
   }
 
   private record PhaseRequest(
-    @JsonProperty("incident_id") String incidentId,
     @JsonProperty("phase_type_id") String phaseTypeId,
     @JsonProperty("priority") int priority,
     @JsonProperty("started_at") String startedAt,

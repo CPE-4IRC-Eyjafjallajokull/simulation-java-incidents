@@ -14,7 +14,7 @@
       "bounds": {
         "latMin": 45.748,
         "latMax": 45.764,
-        "lonMin": 4.825,
+        "lonMin": 4.828,
         "lonMax": 4.840
       },
       "excludedZones": [],
@@ -44,8 +44,8 @@
       "bounds": {
         "latMin": 45.752,
         "latMax": 45.772,
-        "lonMin": 4.808,
-        "lonMax": 4.825
+        "lonMin": 4.805,
+        "lonMax": 4.823
       },
       "excludedZones": [],
       "restrictedZones": [
@@ -72,7 +72,7 @@
       "bounds": {
         "latMin": 45.765,
         "latMax": 45.780,
-        "lonMin": 4.842,
+        "lonMin": 4.848,
         "lonMax": 4.865
       },
       "excludedZones": [],
@@ -136,7 +136,7 @@
         "latMin": 45.760,
         "latMax": 45.795,
         "lonMin": 4.870,
-        "lonMax": 4.920
+        "lonMax": 4.905
       },
       "excludedZones": [],
       "restrictedZones": []
@@ -147,20 +147,20 @@
       "type": "WATER",
       "name": "Rhône",
       "polygon": [
-        [45.70, 4.838],
-        [45.70, 4.862],
-        [45.82, 4.862],
-        [45.82, 4.838]
+        [45.70, 4.842],
+        [45.70, 4.847],
+        [45.82, 4.847],
+        [45.82, 4.842]
       ]
     },
     {
       "type": "WATER",
       "name": "Saône",
       "polygon": [
-        [45.72, 4.820],
-        [45.72, 4.835],
-        [45.82, 4.835],
-        [45.82, 4.820]
+        [45.72, 4.824],
+        [45.72, 4.827],
+        [45.82, 4.827],
+        [45.82, 4.824]
       ]
     }
   ]
