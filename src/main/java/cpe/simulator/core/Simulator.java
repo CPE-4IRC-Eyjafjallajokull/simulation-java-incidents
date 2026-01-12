@@ -161,7 +161,7 @@ public final class Simulator {
     OffsetDateTime startedAt = phase.timestamp();
 
     incidentService.addIncidentPhase(incidentId,
-        new IncidentPhaseForApi(phaseTypeId, priority, startedAt, startedAt));
+        new IncidentPhaseForApi(phaseTypeId, priority, startedAt, null));
     logger.info("NEW PHASE : " + phaseCode);
   }
 
