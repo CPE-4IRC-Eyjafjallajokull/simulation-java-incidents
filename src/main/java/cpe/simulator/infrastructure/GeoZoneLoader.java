@@ -27,10 +27,11 @@ public final class GeoZoneLoader {
         throw new IllegalArgumentException("Zone not found: " + zoneName);
       }
 
-      // Charger les zones exclues globales
+      // Charger les zones globales
       List<ExcludedZone> globalExcluded = loadExcludedZones(root.path("globalExcludedZones"));
+      List<RestrictedZone> globalRestricted = loadRestrictedZones(root.path("globalRestrictedZones"));
 
-      return loadZoneFromNode(zoneNode, globalExcluded);
+      return loadZoneFromNode(zoneNode, globalExcluded, globalRestricted);
     }
   }
 
@@ -40,19 +41,20 @@ public final class GeoZoneLoader {
       JsonNode root = mapper.readTree(input);
       JsonNode zonesNode = root.path("zones");
 
-      // Charger les zones exclues globales
+      // Charger les zones globales
       List<ExcludedZone> globalExcluded = loadExcludedZones(root.path("globalExcludedZones"));
+      List<RestrictedZone> globalRestricted = loadRestrictedZones(root.path("globalRestrictedZones"));
 
       List<GeoZone> zones = new ArrayList<>();
       zonesNode.fieldNames().forEachRemaining(zoneName -> {
         JsonNode zoneNode = zonesNode.path(zoneName);
-        zones.add(loadZoneFromNode(zoneNode, globalExcluded));
+        zones.add(loadZoneFromNode(zoneNode, globalExcluded, globalRestricted));
       });
       return zones;
     }
   }
 
-  private GeoZone loadZoneFromNode(JsonNode zoneNode, List<ExcludedZone> globalExcluded) {
+  private GeoZone loadZoneFromNode(JsonNode zoneNode, List<ExcludedZone> globalExcluded, List<RestrictedZone> globalRestricted) {
     // Charger les bounds
     JsonNode boundsNode = zoneNode.path("bounds");
     double latMin = boundsNode.path("latMin").asDouble();
@@ -72,8 +74,9 @@ public final class GeoZoneLoader {
     List<ExcludedZone> excludedZones = new ArrayList<>(globalExcluded);
     excludedZones.addAll(loadExcludedZones(zoneNode.path("excludedZones")));
 
-    // Charger les zones restreintes
-    List<RestrictedZone> restrictedZones = loadRestrictedZones(zoneNode.path("restrictedZones"));
+    // Charger les zones restreintes (locales + globales)
+    List<RestrictedZone> restrictedZones = new ArrayList<>(globalRestricted);
+    restrictedZones.addAll(loadRestrictedZones(zoneNode.path("restrictedZones")));
 
     return new GeoZone(latMin, latMax, lonMin, lonMax, excludedZones, restrictedZones);
   }
