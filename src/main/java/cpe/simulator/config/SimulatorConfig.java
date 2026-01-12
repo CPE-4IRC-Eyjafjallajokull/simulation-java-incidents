@@ -24,7 +24,8 @@ public record SimulatorConfig(
     String geoZonesPath,
     String geoZoneName,
     double incidentsPerHour,
-    String probabilitiesPath) {
+    String probabilitiesPath,
+    String subProbabilitiesPath) {
   public static SimulatorConfig fromEnvironment() {
     Map<String, String> env = loadEnv();
 
@@ -40,7 +41,8 @@ public record SimulatorConfig(
         env.getOrDefault("GEO_ZONES_PATH", "geographic-zone.json"),
         env.getOrDefault("GEO_ZONE_NAME", "lyon_villeurbanne"),
         parseDouble(env, "INCIDENTS_PER_HOUR", 12.0),
-        env.getOrDefault("INCIDENT_PROBABILITIES_PATH", "incident-probabilities.json"));
+        env.getOrDefault("INCIDENT_PROBABILITIES_PATH", "incident-probabilities.json"),
+        env.getOrDefault("SUB_INCIDENT_PROBABILITIES_PATH", "sub-incident-probabilities.json"));
   }
 
   private static Map<String, String> loadEnv() {

@@ -10,7 +10,13 @@ public record Incident(
   Location location,
   String phaseTypeId,
   int priority,
-  OffsetDateTime startedAt) {
+  OffsetDateTime startedAt,
+  java.util.List<IncidentPhase> phases,
+  IncidentPhase currentPhase) {
+  /** Retourne une nouvelle instance d'Incident avec la phase courante modifiée. */
+  public Incident withCurrentPhase(IncidentPhase newCurrentPhase) {
+    return new Incident(code, label, description, location, phaseTypeId, priority, startedAt, phases, newCurrentPhase);
+  }
   public static Builder builder() {
     return new Builder();
   }
@@ -23,6 +29,17 @@ public record Incident(
     private String phaseTypeId;
     private int priority;
     private OffsetDateTime startedAt;
+    private java.util.List<IncidentPhase> phases = new java.util.ArrayList<>();
+    private IncidentPhase currentPhase;
+    public Builder phases(java.util.List<IncidentPhase> phases) {
+      this.phases = phases;
+      return this;
+    }
+
+    public Builder currentPhase(IncidentPhase currentPhase) {
+      this.currentPhase = currentPhase;
+      return this;
+    }
 
 
     public Builder code(String code) {
@@ -57,7 +74,12 @@ public record Incident(
     }
 
     public Incident build() {
-      return new Incident(code, label, description, location, phaseTypeId, priority, startedAt);
+      return new Incident(code, label, description, location, phaseTypeId, priority, startedAt, phases, currentPhase);
+    }
+
+    public Builder priority(int i) {
+      this.priority = i;
+      return this;
     }
   }
 }

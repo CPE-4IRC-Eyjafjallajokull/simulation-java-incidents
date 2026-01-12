@@ -7,6 +7,7 @@ import cpe.simulator.domain.Incident;
 import cpe.simulator.domain.Location;
 import cpe.simulator.domain.PhaseType;
 import cpe.simulator.domain.PhaseTypeCatalog;
+import cpe.simulator.domain.IncidentPhase;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
@@ -48,7 +49,10 @@ public final class IncidentGenerator {
     }
 
     Location location = generateLocation();
-
+    OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+    IncidentPhase initialPhase = new IncidentPhase(code, phaseType.label(), now);
+    java.util.List<IncidentPhase> phases = new java.util.ArrayList<>();
+    phases.add(initialPhase);
 
     Incident incident =
       Incident.builder()
@@ -57,7 +61,9 @@ public final class IncidentGenerator {
         .description("Incident " + phaseType.label() + " simulé")
         .location(location)
         .phaseType(phaseType)
-        .startedAt(OffsetDateTime.now(ZoneOffset.UTC))
+        .startedAt(now)
+        .phases(phases)
+        .currentPhase(initialPhase)
         .build();
 
     return Optional.of(incident);

@@ -13,6 +13,36 @@ import java.util.List;
 /** Implémentation du service d'incidents via l'API SDMIS. */
 public final class SdmisIncidentService implements IncidentService {
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  static record IncidentPhaseResponse(
+    @JsonProperty("incident_phase_id") String incidentPhaseId,
+    @JsonProperty("incident_id") String incidentId,
+    @JsonProperty("phase_type_id") String phaseTypeId,
+    @JsonProperty("priority") int priority,
+    @JsonProperty("started_at") String startedAt,
+    @JsonProperty("ended_at") String endedAt
+    // ... autres champs ignorés pour le mapping
+  ) {}
+  @Override
+  public void addIncidentPhase(String incidentId, cpe.simulator.domain.IncidentPhaseForApi phase) throws IOException, InterruptedException {
+    PhaseRequest request = new PhaseRequest(
+      incidentId,
+      phase.phaseTypeId(),
+      phase.priority(),
+      phase.startedAt().toString(),
+      phase.endedAt().toString()
+    );
+    httpClient.post("/incidents/phases", request, Void.class);
+  }
+
+  private record PhaseRequest(
+    @JsonProperty("incident_id") String incidentId,
+    @JsonProperty("phase_type_id") String phaseTypeId,
+    @JsonProperty("priority") int priority,
+    @JsonProperty("started_at") String startedAt,
+    @JsonProperty("ended_at") String endedAt
+  ) {}
+
   private static final TypeReference<List<PhaseType>> PHASE_TYPE_LIST = new TypeReference<>() {};
 
   private final HttpApiClient httpClient;
@@ -31,7 +61,7 @@ public final class SdmisIncidentService implements IncidentService {
     IncidentRequest request = toRequest(incident);
     IncidentResponse response =
         httpClient.post("/qg/incidents/new", request, IncidentResponse.class);
-    return response.incident != null ? response.incident.incidentId : null;
+    return response.incidentId != null ? response.incidentId : null;
   }
 
   private IncidentRequest toRequest(Incident incident) {
@@ -68,8 +98,5 @@ public final class SdmisIncidentService implements IncidentService {
   private record PhaseDto(@JsonProperty("phase_type_id") String phaseTypeId, Integer priority) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  private record IncidentResponse(IncidentData incident) {
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    record IncidentData(@JsonProperty("incident_id") String incidentId) {}
-  }
+  private record IncidentResponse(@JsonProperty("incident_id") String incidentId) {}
 }
