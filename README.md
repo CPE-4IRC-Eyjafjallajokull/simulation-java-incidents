@@ -1,3 +1,30 @@
+# Branche multi-phase-incident
+
+> **Nouveauté sur la branche `multi-phase-incident` :**
+
+Cette branche introduit la gestion évolutive des incidents. Chaque incident peut comporter plusieurs phases successives, simulant l'évolution d'une situation réelle.
+
+### Fonctionnement évolutif
+
+- À chaque tic de simulation, une seule action est réalisée :
+	- Soit un nouvel incident est créé (avec une phase initiale).
+	- Soit un incident existant (non terminé) évolue vers une nouvelle phase selon les probabilités définies dans `sub-incident-probabilities.json`.
+- Les incidents évoluent jusqu'à tirer la phase terminale `NO_INCIDENT`, qui marque la fin de leur évolution.
+- L'incident à faire évoluer est choisi aléatoirement parmi les incidents actifs.
+- Chaque phase supplémentaire est envoyée à l'API via `POST /incidents/phases`.
+
+### Exemple de log
+
+- `NEW-INC Incident envoyé: Accident de la circulation (id=...)` : création d'un nouvel incident.
+- `NEW-PHA Incident Accident de la circulation evolution : nouvelle phase ACC_ROAD` : ajout d'une nouvelle phase à un incident existant.
+- `NEW-PHA Incident terminé (NO_INCIDENT) : Accident de la circulation` : incident terminé, n'évolue plus.
+
+### Points importants
+
+- Plusieurs phases peuvent être créées pour un même incident, chacune simulant une étape ou une évolution.
+- Le workflow alterne entre création et évolution, pour une simulation réaliste et progressive.
+- Les incidents terminés ne sont plus modifiés.
+
 # Simulation Java Incidents
 
 Simulateur d'incidents pour alimenter le QG en environnement de test. Il sélectionne un code d'incident selon des probabilités, envoie un incident à l'API, puis boucle pour simuler des créations en continu.
